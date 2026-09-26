@@ -1,0 +1,83 @@
+executor: "KubernetesExecutor"
+
+images:
+  airflow:
+    repository: apache/airflow
+    tag: "2.10.5"
+
+dags:
+  persistence:
+    enabled: true
+    size: 1Gi
+
+statsd:
+  enabled: false
+
+triggerer:
+  enabled: false
+
+workers:
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+scheduler:
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "2000m"
+      memory: "1Gi"
+  startupProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    failureThreshold: 20
+    timeoutSeconds: 30
+
+webserver:
+  strategy:
+    type: Recreate
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  service:
+    type: NodePort
+    ports:
+      - name: airflow-ui
+        port: 8080
+        targetPort: 8080
+        nodePort: 30080
+  startupProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 20
+
+config:
+  scheduler:
+    dag_dir_list_interval: '30'
+  webserver:
+    workers: '2'
+    web_server_master_timeout: '300'
+    web_server_worker_timeout: '300'
+
+postgresql:
+  enabled: false
+
+data:
+  metadataSecretName: "airflow-metadata-db"
+
+webserverSecretKeySecretName: "airflow-webserver-secret"
+
+extraEnvFrom: |
+  - secretRef:
+      name: airflow-connections-secret

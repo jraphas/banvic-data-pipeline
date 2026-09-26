@@ -1,0 +1,34 @@
+# Segredos - NUNCA versionar
+.env
+**/secret.yaml
+**/airflow-secrets.yaml
+
+# Dados de origem (podem conter dados sensíveis simulados do BanVic)
+data/csv/
+data/*.zip
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Airflow
+logs/
+airflow.db
+airflow-webserver.pid
+
+# Meltano
+ingestion/meltano/.meltano/
+ingestion/meltano/output/
+ingestion/meltano/logs/
+
+# Kind / kubeconfig temporário (se exportado localmente)
+kubeconfig*.yaml
+
+# SO / editores
+.DS_Store
+.idea/
+.vscode/
+*.swp
